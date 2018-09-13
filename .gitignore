@@ -1,2 +1,3 @@
 entrada
 *.exe
+.ycm*
