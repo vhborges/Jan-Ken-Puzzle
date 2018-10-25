@@ -2,6 +2,19 @@
 #include <vector>
 #include <set>
 
+void update_board(std::vector<std::vector<int>>& board, const int old_i, const int old_j, const int new_i, const int new_j, int& aux)
+{
+  aux = board[new_i][new_j];
+  board[new_i][new_j] = board[old_i][old_j];
+  board[old_i][old_j] = 0;
+}
+
+void reverse_update(std::vector<std::vector<int>>& board, const int old_i, const int old_j, const int new_i, const int new_j, const int aux)
+{
+  board[old_i][old_j] = board[new_i][new_j];
+  board[new_i][new_j] = aux;
+}
+
 void fill_board(std::vector<std::vector<int>>& board, const int rows, const int columns, int& count)
 {
   for(int i = 0; i < rows; i++)
@@ -84,9 +97,8 @@ void find_solutions(std::vector<std::vector<int>> board, int count, const int i,
   {
     if(is_valid_up(board, i, j))
     {
-      const int aux = board[i-1][j];
-      board[i-1][j] = board[i][j];
-      board[i][j] = 0;
+      int aux;
+      update_board(board, i, j, i-1, j, aux);
       for(int _i = 0; _i < (int) board.size(); _i++)
       {
         for(int _j = 0; _j < (int) board[_i].size(); _j++)
@@ -99,14 +111,12 @@ void find_solutions(std::vector<std::vector<int>> board, int count, const int i,
           }
         }
       }
-      board[i][j] = board[i-1][j];
-      board[i-1][j] = aux;
+      reverse_update(board, i, j, i-1, j, aux);
     }
     if(is_valid_right(board, i, j))
     {
-      const int aux = board[i][j+1];
-      board[i][j+1] = board[i][j];
-      board[i][j] = 0;
+      int aux;
+      update_board(board, i, j, i, j+1, aux);
       for(int _i = 0; _i < (int) board.size(); _i++)
       {
         for(int _j = 0; _j < (int) board[_i].size(); _j++)
@@ -119,14 +129,12 @@ void find_solutions(std::vector<std::vector<int>> board, int count, const int i,
           }
         }
       }
-      board[i][j] = board[i][j+1];
-      board[i][j+1] = aux;
+      reverse_update(board, i, j, i, j+1, aux);
     }
     if(is_valid_down(board, i, j))
     {
-      const int aux = board[i+1][j];
-      board[i+1][j] = board[i][j];
-      board[i][j] = 0;
+      int aux;
+      update_board(board, i, j, i+1, j, aux);
       for(int _i = 0; _i < (int) board.size(); _i++)
       {
         for(int _j = 0; _j < (int) board[_i].size(); _j++)
@@ -139,14 +147,12 @@ void find_solutions(std::vector<std::vector<int>> board, int count, const int i,
           }
         }
       }
-      board[i][j] = board[i+1][j];
-      board[i+1][j] = aux;
+      reverse_update(board, i, j, i+1, j, aux);
     }
     if(is_valid_left(board, i, j))
     {
-      const int aux = board[i][j-1];
-      board[i][j-1] = board[i][j];
-      board[i][j] = 0;
+      int aux;
+      update_board(board, i, j, i, j-1, aux);
       for(int _i = 0; _i < (int) board.size(); _i++)
       {
         for(int _j = 0; _j < (int) board[_i].size(); _j++)
@@ -159,8 +165,7 @@ void find_solutions(std::vector<std::vector<int>> board, int count, const int i,
           }
         }
       }
-      board[i][j] = board[i][j-1];
-      board[i][j-1] = aux;
+      reverse_update(board, i, j, i, j-1, aux);
     }
   }
 }
