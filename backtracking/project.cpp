@@ -2,20 +2,23 @@
 #include <vector>
 #include <set>
 
-void update_board(std::vector<std::vector<int>>& board, const int old_i, const int old_j, const int new_i, const int new_j, int& aux)
+typedef std::vector<std::vector<int>> vector_2d_int;
+typedef std::set<std::vector<int>> set_vector_int;
+
+void update_board(vector_2d_int& board, const int old_i, const int old_j, const int new_i, const int new_j, int& aux)
 {
   aux = board[new_i][new_j];
   board[new_i][new_j] = board[old_i][old_j];
   board[old_i][old_j] = 0;
 }
 
-void reverse_update(std::vector<std::vector<int>>& board, const int old_i, const int old_j, const int new_i, const int new_j, const int aux)
+void reverse_update(vector_2d_int& board, const int old_i, const int old_j, const int new_i, const int new_j, const int aux)
 {
   board[old_i][old_j] = board[new_i][new_j];
   board[new_i][new_j] = aux;
 }
 
-void fill_board(std::vector<std::vector<int>>& board, const int rows, const int columns, int& count)
+void fill_board(vector_2d_int& board, const int rows, const int columns, int& count)
 {
   for(int i = 0; i < rows; i++)
   {
@@ -28,7 +31,7 @@ void fill_board(std::vector<std::vector<int>>& board, const int rows, const int 
   }
 }
 
-void fill_solutions(const std::vector<std::vector<int>>& board, std::set<std::vector<int>>& solutions)
+void fill_solutions(const vector_2d_int& board, set_vector_int& solutions)
 {
   for(int i = 0; i < (int) board.size(); i++)
   {
@@ -40,7 +43,7 @@ void fill_solutions(const std::vector<std::vector<int>>& board, std::set<std::ve
   }
 }
 
-void print_solutions(const std::set<std::vector<int>>& solutions, int total_sol)
+void print_solutions(const set_vector_int& solutions, int total_sol)
 {
   std::cout << total_sol << "\n" << solutions.size() << "\n";
   for(auto s : solutions)
@@ -53,7 +56,7 @@ void print_solutions(const std::set<std::vector<int>>& solutions, int total_sol)
   }
 }
 
-bool is_valid_up(const std::vector<std::vector<int>>& board, const int i, const int j)
+bool is_valid_up(const vector_2d_int& board, const int i, const int j)
 {
   if(i-1 >= 0)
     return (board[i-1][j] == board[i][j] + 1 || (board[i][j] == 3 && board[i-1][j] == 1));
@@ -61,7 +64,7 @@ bool is_valid_up(const std::vector<std::vector<int>>& board, const int i, const 
     return false;
 }
 
-bool is_valid_right(const std::vector<std::vector<int>>& board, const int i, const int j)
+bool is_valid_right(const vector_2d_int& board, const int i, const int j)
 {
   if(j+1 < (int) board[i].size())
     return (board[i][j+1] == board[i][j] + 1 || (board[i][j] == 3 && board[i][j+1] == 1));
@@ -69,7 +72,7 @@ bool is_valid_right(const std::vector<std::vector<int>>& board, const int i, con
     return false;
 }
 
-bool is_valid_down(const std::vector<std::vector<int>>& board, const int i, const int j)
+bool is_valid_down(const vector_2d_int& board, const int i, const int j)
 {
   if(i+1 < (int) board.size())
     return (board[i+1][j] == board[i][j] + 1 || (board[i][j] == 3 && board[i+1][j] == 1));
@@ -77,7 +80,7 @@ bool is_valid_down(const std::vector<std::vector<int>>& board, const int i, cons
     return false;
 }
 
-bool is_valid_left(const std::vector<std::vector<int>>& board, const int i, const int j)
+bool is_valid_left(const vector_2d_int& board, const int i, const int j)
 {
   if(j-1 >= 0)
     return (board[i][j-1] == board[i][j] + 1 || (board[i][j] == 3 && board[i][j-1] == 1));
@@ -85,7 +88,7 @@ bool is_valid_left(const std::vector<std::vector<int>>& board, const int i, cons
     return false;
 }
 
-void find_solutions(std::vector<std::vector<int>> board, int count, const int i, const int j, int& total_sol, std::set<std::vector<int>>& solutions)
+void find_solutions(vector_2d_int board, int count, const int i, const int j, int& total_sol, set_vector_int& solutions)
 {
   if(count == 1)
   {
@@ -171,12 +174,12 @@ int main()
   int rows, columns;
   std::cin >> rows >> columns;
 
-  std::vector<std::vector<int>> board(rows, std::vector<int>(columns));
+  vector_2d_int board(rows, std::vector<int>(columns));
   int count = 0;
   fill_board(board, rows, columns, count);
 
   int total_sol = 0;
-  std::set<std::vector<int>> solutions;
+  set_vector_int solutions;
   for(int i = 0; i < (int) board.size(); i++)
   {
     for(int j = 0; j < (int) board[i].size(); j++)
