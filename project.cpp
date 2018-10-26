@@ -105,12 +105,11 @@ void find_solutions(std::vector<std::vector<int>> board, int count, const int i,
         {
           find_solutions(board, count-1, _i, _j, total_sol, solutions);
           if(count == 2)
-          {
-            _i = board.size();      // to break the nested loop when the returned
-            _j = board[_i].size();  // recursion call was the last one
-          }
+            //break the nested loop when the returned recursion was the last one
+            goto jump_loop1;
         }
       }
+jump_loop1:
       reverse_update(board, i, j, i-1, j, aux);
     }
     if(is_valid_right(board, i, j))
@@ -123,12 +122,11 @@ void find_solutions(std::vector<std::vector<int>> board, int count, const int i,
         {
           find_solutions(board, count-1, _i, _j, total_sol, solutions);
           if(count == 2)
-          {
-            _i = board.size();      // to break the nested loop when the returned
-            _j = board[_i].size();  // recursion call was the last one
-          }
+            //break the nested loop when the returned recursion was the last one
+            goto jump_loop2;
         }
       }
+jump_loop2:
       reverse_update(board, i, j, i, j+1, aux);
     }
     if(is_valid_down(board, i, j))
@@ -141,12 +139,11 @@ void find_solutions(std::vector<std::vector<int>> board, int count, const int i,
         {
           find_solutions(board, count-1, _i, _j, total_sol, solutions);
           if(count == 2)
-          {
-            _i = board.size();      // to break the nested loop when the returned
-            _j = board[_i].size();  // recursion call was the last one
-          }
+            //break the nested loop when the returned recursion was the last one
+            goto jump_loop3;
         }
       }
+jump_loop3:
       reverse_update(board, i, j, i+1, j, aux);
     }
     if(is_valid_left(board, i, j))
@@ -159,12 +156,11 @@ void find_solutions(std::vector<std::vector<int>> board, int count, const int i,
         {
           find_solutions(board, count-1, _i, _j, total_sol, solutions);
           if(count == 2)
-          {
-            _i = board.size();      // to break the nested loop when the returned
-            _j = board[_i].size();  // recursion call was the last one
-          }
+            //break the nested loop when the returned recursion was the last one
+            goto jump_loop4;
         }
       }
+jump_loop4:
       reverse_update(board, i, j, i, j-1, aux);
     }
   }
