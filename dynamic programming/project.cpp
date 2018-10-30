@@ -122,18 +122,19 @@ bool is_solvable(const bitset<50>& board)
 
   // find the first piece of the board and call dfs() for that piece
   int i, j;
-  for(i = 0; i < rows; i++)
+  bool outer_loop = true;
+  for(i = 0; i < rows && outer_loop; i++)
   {
     for(j = 0; j < columns; j++)
     {
       if(get_value(board, i, j) != EMPTY)
       {
         dfs(board, i, j, visited);
-        goto jump_nested_loop;
+        outer_loop = false;
+        break;
       }
     }
   }
-jump_nested_loop:
 
   // starting on the first piece, check if all the pieces on the board were visited
   for(int _i = i; _i < rows; _i++)
