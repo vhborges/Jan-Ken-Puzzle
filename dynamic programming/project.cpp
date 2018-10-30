@@ -82,9 +82,9 @@ void fill_solutions(const bitset<50>& board, set<vector<int>>& solutions)
   }
 }
 
-void print_solutions(const set<vector<int>>& solutions, const int total_sol)
+void print_solutions(const set<vector<int>>& solutions, const unsigned long long total_solutions)
 {
-  cout << total_sol << "\n" << solutions.size() << "\n";
+  cout << total_solutions << "\n" << solutions.size() << "\n";
   for(auto s : solutions)
   {
     for(auto v : s)
