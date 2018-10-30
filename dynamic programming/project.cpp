@@ -1,8 +1,9 @@
 #include <iostream>
 #include <vector>
-#include <set>
 #include <unordered_map>
 #include <bitset>
+#include <tuple>
+#include <algorithm>
 
 #define EMPTY 0
 #define ROCK 1
@@ -69,7 +70,7 @@ void fill_board(bitset<50>& board, unsigned& count)
   }
 }
 
-void fill_solutions(const bitset<50>& board, set<vector<int>>& solutions)
+void fill_solutions(const bitset<50>& board, vector<tuple<int, int, int>>& solutions)
 {
   for(int i = 0; i < rows; i++)
   {
@@ -77,21 +78,18 @@ void fill_solutions(const bitset<50>& board, set<vector<int>>& solutions)
     {
       int value = get_value(board, i, j);
       if(value != EMPTY)
-        solutions.insert({i+1, j+1, value});
+        solutions.emplace_back(i+1, j+1, value);
     }
   }
 }
 
-void print_solutions(const set<vector<int>>& solutions, const unsigned long long total_solutions)
+void print_solutions(const vector<tuple<int, int, int>>& solutions, const unsigned long long total_solutions)
 {
-  cout << total_solutions << "\n" << solutions.size() << "\n";
+  cout << total_solutions << "\n"
+       << solutions.size() << "\n";
   for(auto s : solutions)
   {
-    for(auto v : s)
-    {
-      cout << v << " ";
-    }
-    cout << "\n";
+    cout << get<0>(s) << " " << get<1>(s) << " " << get<2>(s) << "\n";
   }
 }
 
@@ -202,7 +200,7 @@ bool is_valid_left(const bitset<50>& board, const int i, const int j)
     return false;
 }
 
-unsigned long long find_solutions(bitset<50> board, set<vector<int>>& solutions, const unsigned count)
+unsigned long long find_solutions(bitset<50> board, vector<tuple<int, int, int>>& solutions, const unsigned count)
 {
   static u_map_bitset memoization;
 
@@ -275,9 +273,10 @@ int main()
   unsigned count = 0;
   fill_board(board, count);
 
-  set<vector<int>> solutions;
+  vector<tuple<int, int, int>> solutions;
   unsigned long long total_solutions = find_solutions(board, solutions, count);
 
+  sort(solutions.begin(), solutions.end());
   print_solutions(solutions, total_solutions);
 
   return 0;
