@@ -1,7 +1,7 @@
 #include <iostream>
+#include <cstdint>
 #include <vector>
 #include <unordered_map>
-#include <bitset>
 #include <tuple>
 #include <algorithm>
 
@@ -12,33 +12,32 @@
 
 using namespace std;
 
-// map where the key is a bitset of size 50 (the board) and the value is the number of solutions of that board
+// map where the key is a 64 bit integer (the board) and the value is the number of solutions of that board
 // each ordered pair of 2 bits represent 1 value of a given position in the 2D board
-typedef unordered_map<bitset<50>, unsigned> u_map_bitset;
+typedef unordered_map<uint64_t, unsigned long long> u_map_uint64;
 
 // size of the board
 int rows, columns;
 
 // return the value stored on position i and j (2D) on the board (1D)
-int get_value(const bitset<50>& board, const int i, const int j)
+int get_value(const uint64_t& board, const int i, const int j)
 {
   int pos = i*columns + j;
-  int value = ((board >> 2*pos) & bitset<50>(3)).to_ulong();
+  int value = (board >> 2*pos) & 3;
   return value;
 }
 
 // store the 'value' on the board
-void set_value(bitset<50>& board, const int i, const int j, const int value)
+void set_value(uint64_t& board, const int i, const int j, const int value)
 {
   int pos = i*columns + j;
-  // clear the two bits on which the value will be stored
-  board.reset(2*pos);
-  board.reset(2*pos+1);
-  bitset<50> value_as_bitset(value);
-  board |= (value_as_bitset << 2*pos);
+  // clear the two bits where the value will be stored
+  board &= ~(uint64_t(3) << 2*pos);
+  // store the value
+  board |= (uint64_t(value) << 2*pos);
 }
 
-int update_board(bitset<50>& board, const int old_i, const int old_j, const int new_i, const int new_j)
+int update_board(uint64_t& board, const int old_i, const int old_j, const int new_i, const int new_j)
 {
   int new_value = get_value(board, new_i, new_j);
   int old_value = get_value(board, old_i, old_j);
@@ -48,14 +47,14 @@ int update_board(bitset<50>& board, const int old_i, const int old_j, const int 
   return stored_value;
 }
 
-void reverse_update(bitset<50>& board, const int old_i, const int old_j, const int new_i, const int new_j, const int stored_value)
+void reverse_update(uint64_t& board, const int old_i, const int old_j, const int new_i, const int new_j, const int stored_value)
 {
   int new_value = get_value(board, new_i, new_j);
   set_value(board, old_i, old_j, new_value);
   set_value(board, new_i, new_j, stored_value);
 }
 
-void fill_board(bitset<50>& board, unsigned& count)
+void fill_board(uint64_t& board, unsigned& count)
 {
   for(int i = 0; i < rows; i++)
   {
@@ -70,7 +69,7 @@ void fill_board(bitset<50>& board, unsigned& count)
   }
 }
 
-void fill_solutions(const bitset<50>& board, vector<tuple<int, int, int>>& solutions)
+void fill_solutions(const uint64_t& board, vector<tuple<int, int, int>>& solutions)
 {
   for(int i = 0; i < rows; i++)
   {
@@ -94,7 +93,7 @@ void print_solutions(const vector<tuple<int, int, int>>& solutions, const unsign
 }
 
 // Do a depth-first search on the board
-void dfs(const bitset<50>& board, const int i, const int j, vector<vector<bool>>& visited)
+void dfs(const uint64_t& board, const int i, const int j, vector<vector<bool>>& visited)
 {
   if(i < 0 || i > rows-1 || j < 0 || j > columns-1)
     return;
@@ -113,7 +112,7 @@ void dfs(const bitset<50>& board, const int i, const int j, vector<vector<bool>>
 }
 
 // check if all the pieces of the board can be achieved by a starting piece
-bool is_solvable(const bitset<50>& board)
+bool not_solvable(const uint64_t& board)
 {
   // initialize the visited vector to false on all positions
   vector<vector<bool>> visited(rows, vector<bool>(columns, false));
@@ -143,16 +142,16 @@ bool is_solvable(const bitset<50>& board)
       {
         if(visited[_i][_j] == false)
           // at least one piece weren't visited
-          return false;
+          return true;
       }
     }
   }
 
   // all pieces were visited
-  return true;
+  return false;
 }
 
-bool is_valid_up(const bitset<50>& board, const int i, const int j)
+bool is_valid_up(const uint64_t& board, const int i, const int j)
 {
   if(i-1 >= 0)
   {
@@ -164,7 +163,7 @@ bool is_valid_up(const bitset<50>& board, const int i, const int j)
     return false;
 }
 
-bool is_valid_right(const bitset<50>& board, const int i, const int j)
+bool is_valid_right(const uint64_t& board, const int i, const int j)
 {
   if(j+1 < columns)
   {
@@ -176,7 +175,7 @@ bool is_valid_right(const bitset<50>& board, const int i, const int j)
     return false;
 }
 
-bool is_valid_down(const bitset<50>& board, const int i, const int j)
+bool is_valid_down(const uint64_t& board, const int i, const int j)
 {
   if(i+1 < rows)
   {
@@ -188,7 +187,7 @@ bool is_valid_down(const bitset<50>& board, const int i, const int j)
     return false;
 }
 
-bool is_valid_left(const bitset<50>& board, const int i, const int j)
+bool is_valid_left(const uint64_t& board, const int i, const int j)
 {
   if(j-1 >= 0)
   {
@@ -200,21 +199,15 @@ bool is_valid_left(const bitset<50>& board, const int i, const int j)
     return false;
 }
 
-unsigned long long find_solutions(bitset<50> board, vector<tuple<int, int, int>>& solutions, const unsigned count)
+unsigned long long find_solutions(uint64_t board, vector<tuple<int, int, int>>& solutions, const unsigned count)
 {
-  static u_map_bitset memoization;
+  static u_map_uint64 memoization;
 
   // check if the number of solutions for this board is already stored
   const auto search = memoization.find(board);
   if(search != memoization.end())
   {
     return search->second;
-  }
-
-  if(!is_solvable(board))
-  {
-    memoization[board] = 0;
-    return 0;
   }
 
   // if there's only one piece left on the board
@@ -225,12 +218,18 @@ unsigned long long find_solutions(bitset<50> board, vector<tuple<int, int, int>>
     return 1;
   }
 
+  if(not_solvable(board))
+  {
+    memoization[board] = 0;
+    return 0;
+  }
+
   unsigned long long total_solutions = 0;
   for(int i = 0; i < rows; i++)
   {
     for(int j = 0; j < columns; j++)
     {
-      if(get_value(board, i, j) != 0)
+      if(get_value(board, i, j) != EMPTY)
       {
         if(is_valid_up(board, i, j))
         {
@@ -268,7 +267,8 @@ int main()
 {
   cin >> rows >> columns;
 
-  bitset<50> board;
+  uint64_t board;
+
   // number of pieces on the board
   unsigned count = 0;
   fill_board(board, count);
